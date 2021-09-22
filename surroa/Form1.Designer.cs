@@ -43,6 +43,10 @@ namespace surroa
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // SYNC_BUTTON
@@ -173,11 +177,51 @@ namespace surroa
             this.label10.TabIndex = 13;
             this.label10.Click += new System.EventHandler(this.label10_Click);
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(139, 186);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(0, 15);
+            this.label11.TabIndex = 14;
+            this.label11.Click += new System.EventHandler(this.label11_Click);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(95, 186);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(33, 15);
+            this.label12.TabIndex = 15;
+            this.label12.Text = "Sent:";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(279, 186);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(57, 15);
+            this.label13.TabIndex = 16;
+            this.label13.Text = "Received:";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(342, 186);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(0, 15);
+            this.label14.TabIndex = 17;
+            this.label14.Click += new System.EventHandler(this.label14_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
@@ -216,6 +260,10 @@ namespace surroa
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
     }
 }
 

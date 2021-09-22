@@ -14,6 +14,8 @@ namespace surroa
 {
     public partial class Form1 : Form
     {
+
+
         public Form1()
         {
             InitializeComponent();
@@ -45,99 +47,138 @@ namespace surroa
             //WRITES
         }
 
-        PerformanceCounter cpuCounter;
-        PerformanceCounter ramCounter;
-        private PerformanceCounter diskReadsPerformanceCounter = new PerformanceCounter();
-        private PerformanceCounter diskWritesPerformanceCounter = new PerformanceCounter();
-        private PerformanceCounter diskTransfersPerformanceCounter = new PerformanceCounter();
+        private void label11_Click(object sender, EventArgs e)
+        {
+            //SENT
+        }
+
+        private void label14_Click(object sender, EventArgs e)
+        {
+            //RECEIVED
+        }
+
+        private int AveragePerformance(PerformanceCounter performanceCounter)
+        {
+            int time = 15;
+            int[] average = new int[15]; //maybe 14
+            performanceCounter.NextValue();
+            Thread.Sleep(300);
+            
+
+            while (time != 0)
+            {
+                int _value = (int)performanceCounter.NextValue();
+                average[time - 1] = _value;
+                time--;
+                Thread.Sleep(1000);
+            }
+
+            return (int)average.Average();
+
+        }
+
+        private int AveragePerformanceTask(PerformanceCounter performanceCounter)
+        {
+            Task<int> _task = new Task<int>(() =>
+            {
+                return AveragePerformance(performanceCounter);
+            });
+            _task.Start();
+
+            return _task.Result;
+        }
+
+
+        private PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+        private PerformanceCounter ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+        private PerformanceCounter diskReadsPerformanceCounter = new PerformanceCounter("PhysicalDisk","Disk Reads/sec","_Total");
+        private PerformanceCounter diskWritesPerformanceCounter = new PerformanceCounter("PhysicalDisk","Disk Writes/sec","_Total");
+        PerformanceCounterCategory performanceCounterCategory = new PerformanceCounterCategory("Network Interface");
+
 
         private void button1_Click(object sender, EventArgs e)
         {
+
+
             //CPU
-            cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+
             label5.Text = "Calculating..";
-            Refresh();
-            Thread.Sleep(2000);
-            cpuCounter.NextValue();
-            Thread.Sleep(1000);
-
-
-            int time = 15;
-            int[] average = new int[15];
-
-            while (time != 0)
+            Thread.Sleep(300);
+            Task<int> cpu_task = new Task<int>(() =>
             {
-                int cpu_value = (int)cpuCounter.NextValue();
-                average[time - 1] = cpu_value;
-                time--;
-                Thread.Sleep(1000);
+                return AveragePerformance(cpuCounter);
+            });
+            cpu_task.Start();
 
-            }
-            int average_cpu = (int)average.Average();
-
-            label5.Text = average_cpu + "%";
-            time = 15;
-
+            
             //RAM
-            ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+
             label6.Text = "Measuring RAM usage...";
-            Refresh();
-            Thread.Sleep(1000);
-            ramCounter.NextValue();
-            Thread.Sleep(1000);
-
-            Array.Clear(average, 0, average.Length);
-
-            while (time != 0)
+            Thread.Sleep(300);
+            Task<int> ram_task = new Task<int>(() =>
             {
-                int ram_value = (int)ramCounter.NextValue();
-                average[time - 1] = ram_value;
-                time--;
-                Thread.Sleep(1000);
-            }
-            int average_ram = (int)average.Average();
-            label6.Text = average_ram + "MB";
-            time = 15;
+                return AveragePerformance(ramCounter);
+            });
+            ram_task.Start();
+
 
             //I/O
 
-            //fix to make average
-            //enable multithreading
-
-            this.diskReadsPerformanceCounter.CategoryName = "PhysicalDisk";
-            this.diskReadsPerformanceCounter.CounterName = "Disk Reads/sec";
-            this.diskReadsPerformanceCounter.InstanceName = "_Total";
-
-            this.diskWritesPerformanceCounter.CategoryName = "PhysicalDisk";
-            this.diskWritesPerformanceCounter.CounterName = "Disk Writes/sec";
-            this.diskWritesPerformanceCounter.InstanceName = "_Total";
-
-
             label7.Text = "Calculating..";
+            Thread.Sleep(300);
+            Task<int> diskRead_task = new Task<int>(() =>
+            {
+                return AveragePerformance(diskReadsPerformanceCounter);
+                
+            });
+            diskRead_task.Start();
+
+            Task<int> diskWrite_task = new Task<int>(() =>
+            {
+                return AveragePerformance(diskWritesPerformanceCounter);
+            });
+            diskWrite_task.Start();
+
+
+            //NETWORK
+
+            string instance = performanceCounterCategory.GetInstanceNames()[0]; // 1st NIC !
+            PerformanceCounter performanceCounterSent = new PerformanceCounter("Network Interface", "Bytes Sent/sec", instance);
+            PerformanceCounter performanceCounterReceived = new PerformanceCounter("Network Interface", "Bytes Received/sec", instance);
+
+            label11.Text = "Measuring..";
             Refresh();
             Thread.Sleep(300);
-            this.diskReadsPerformanceCounter.NextValue();
-            this.diskWritesPerformanceCounter.NextValue();
-            Thread.Sleep(300);
 
-            Array.Clear(average, 0, average.Length);
-
-            while (time != 0)
+            Task<int> netSent_task = new Task<int>(() =>
             {
-                int disk_value = (int)this.diskReadsPerformanceCounter.NextValue();
-                average[time - 1] = disk_value;
-                time--;
-                Thread.Sleep(1000);
-            }
-            int average_disk_read = (int)average.Average();
+                return AveragePerformance(performanceCounterSent);
+            });
+            netSent_task.Start();
 
-            string currentDiskReads = "Disk reads /s : " + this.diskReadsPerformanceCounter.NextValue().ToString() + Environment.NewLine;
-            string currentDiskWrites = "Disk writes /s : " + this.diskWritesPerformanceCounter.NextValue().ToString() + Environment.NewLine;
+            Task<int> netReceive_task = new Task<int>(() =>
+            {
+                return AveragePerformance(performanceCounterReceived);
+            });
+            netReceive_task.Start();
 
 
-            label7.Text = "Disk reads /s: " + average_disk_read;
-            label10.Text = currentDiskWrites;
+            //After threads finish
+            int cpu_average = cpu_task.Result;
+            int ram_average = ram_task.Result;
+            int diskRead_average = diskRead_task.Result;
+            int diskWrite_average = diskWrite_task.Result;
+            int netSent_average = netSent_task.Result;
+            int netReceive_average = netReceive_task.Result;
 
+            label5.Text = cpu_average + "%";
+            label6.Text = ram_average + "MB";
+            label7.Text = diskRead_average + "/s";
+            label10.Text = diskWrite_average + "/s";
+            label11.Text = netSent_average + "Bytes /s";
+            label14.Text = netReceive_average + "Bytes /s";
+            
+            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -145,6 +186,6 @@ namespace surroa
 
         }
 
-        
+
     }
 }
