@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -56,6 +59,28 @@ namespace surroa
         {
             //RECEIVED
         }
+
+        public class PerformanceParameters
+        {
+            [JsonProperty("cpu_average")]
+            public int cpu_average { get; set; }
+           
+            [JsonProperty("ram_average")]
+            public int ram_average { get; set; }
+
+            [JsonProperty("diskRead_average")]
+            public int diskRead_average { get; set; }
+
+            [JsonProperty("diskWrite_average")]
+            public int diskWrite_average { get; set; }
+
+            [JsonProperty("netSent_average")]
+            public int netSent_average { get; set; }
+
+            [JsonProperty("netReceive_average")]
+            public int netReceive_average { get; set; }
+        }
+
 
         private int AveragePerformance(PerformanceCounter performanceCounter)
         {
@@ -163,22 +188,48 @@ namespace surroa
             netReceive_task.Start();
 
 
+            PerformanceParameters performanceParameters = new PerformanceParameters();
             //After threads finish
-            int cpu_average = cpu_task.Result;
-            int ram_average = ram_task.Result;
-            int diskRead_average = diskRead_task.Result;
-            int diskWrite_average = diskWrite_task.Result;
-            int netSent_average = netSent_task.Result;
-            int netReceive_average = netReceive_task.Result;
+            performanceParameters.cpu_average = cpu_task.Result;
+            performanceParameters.ram_average = ram_task.Result;
+            performanceParameters.diskRead_average = diskRead_task.Result;
+            performanceParameters.diskWrite_average = diskWrite_task.Result;
+            performanceParameters.netSent_average = netSent_task.Result;
+            performanceParameters.netReceive_average = netReceive_task.Result;
 
-            label5.Text = cpu_average + "%";
-            label6.Text = ram_average + "MB";
-            label7.Text = diskRead_average + "/s";
-            label10.Text = diskWrite_average + "/s";
-            label11.Text = netSent_average + "Bytes /s";
-            label14.Text = netReceive_average + "Bytes /s";
-            
-            
+            label5.Text = performanceParameters.cpu_average + "%";
+            label6.Text = performanceParameters.ram_average + "MB";
+            label7.Text = performanceParameters.diskRead_average + "/s";
+            label10.Text = performanceParameters.diskWrite_average + "/s";
+            label11.Text = performanceParameters.netSent_average + "Bytes /s";
+            label14.Text = performanceParameters.netReceive_average + "Bytes /s";
+
+
+            List<PerformanceParameters> _JSONdata = new List<PerformanceParameters>();
+            _JSONdata.Add(new PerformanceParameters()
+            {
+                cpu_average = performanceParameters.cpu_average,
+                ram_average = performanceParameters.ram_average,
+                diskRead_average = performanceParameters.diskRead_average,
+                diskWrite_average = performanceParameters.diskWrite_average,
+                netSent_average = performanceParameters.netSent_average,
+                netReceive_average = performanceParameters.netReceive_average
+            });
+
+            string json = System.Text.Json.JsonSerializer.Serialize(_JSONdata);
+            try
+            {
+                System.IO.Directory.CreateDirectory(@"C:\Users\LimitedEditionBOo\source\surroa_config");
+                File.WriteAllText(@"C:\Users\LimitedEditionBOo\source\surroa_config\Config.json", json);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+
+
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -186,6 +237,20 @@ namespace surroa
 
         }
 
-
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            string fileName = "Config.json";
+            string jsonSTRING = File.ReadAllText(@"C:\Users\LimitedEditionBOo\source\surroa_config\" + fileName);
+            
+            PerformanceParameters performanceParameters = JsonConvert.DeserializeObject<PerformanceParameters>(jsonSTRING.Substring(1, jsonSTRING.Length-2));
+         
+            label5.Text = performanceParameters.cpu_average + "%";
+            label6.Text = performanceParameters.ram_average + "MB";
+            label7.Text = performanceParameters.diskRead_average + "/s";
+            label10.Text = performanceParameters.diskWrite_average + "/s";
+            label11.Text = performanceParameters.netSent_average + "Bytes /s";
+            label14.Text = performanceParameters.netReceive_average + "Bytes /s";
+            
+        }
     }
 }

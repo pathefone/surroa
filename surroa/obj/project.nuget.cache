@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "dNg6LSyiCFiq5jb4C/2qeKP4gcvhW+ggJ06eaTx7NU5nezatJPMK7GfGqhHaZ4Wn6l9MXavFee8ol0pfFR7jhA==",
+  "dgSpecHash": "vQR8nYehJZAB7elywREaRKHHJpmualB9vT1niRIbn6N9Pv+by/vKGFTtzDjGTQeaK7y6sCGNRYUKc5wDv5HfVw==",
   "success": true,
   "projectFilePath": "C:\\Users\\LimitedEditionBOo\\source\\repos\\surroa\\surroa\\surroa.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\LimitedEditionBOo\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
   "logs": []
 }

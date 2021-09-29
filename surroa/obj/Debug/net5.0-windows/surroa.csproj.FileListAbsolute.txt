@@ -16,3 +16,5 @@ C:\Users\LimitedEditionBOo\source\repos\surroa\surroa\obj\Debug\net5.0-windows\s
 C:\Users\LimitedEditionBOo\source\repos\surroa\surroa\obj\Debug\net5.0-windows\ref\surroa.dll
 C:\Users\LimitedEditionBOo\source\repos\surroa\surroa\obj\Debug\net5.0-windows\surroa.pdb
 C:\Users\LimitedEditionBOo\source\repos\surroa\surroa\obj\Debug\net5.0-windows\surroa.genruntimeconfig.cache
+C:\Users\LimitedEditionBOo\source\repos\surroa\surroa\bin\Debug\net5.0-windows\Newtonsoft.Json.dll
+C:\Users\LimitedEditionBOo\source\repos\surroa\surroa\obj\Debug\net5.0-windows\surroa.csproj.CopyComplete
