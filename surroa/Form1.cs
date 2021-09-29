@@ -60,59 +60,6 @@ namespace surroa
             //RECEIVED
         }
 
-        public class PerformanceParameters
-        {
-            [JsonProperty("cpu_average")]
-            public int cpu_average { get; set; }
-           
-            [JsonProperty("ram_average")]
-            public int ram_average { get; set; }
-
-            [JsonProperty("diskRead_average")]
-            public int diskRead_average { get; set; }
-
-            [JsonProperty("diskWrite_average")]
-            public int diskWrite_average { get; set; }
-
-            [JsonProperty("netSent_average")]
-            public int netSent_average { get; set; }
-
-            [JsonProperty("netReceive_average")]
-            public int netReceive_average { get; set; }
-        }
-
-
-        private int AveragePerformance(PerformanceCounter performanceCounter)
-        {
-            int time = 15;
-            int[] average = new int[15]; //maybe 14
-            performanceCounter.NextValue();
-            Thread.Sleep(300);
-            
-
-            while (time != 0)
-            {
-                int _value = (int)performanceCounter.NextValue();
-                average[time - 1] = _value;
-                time--;
-                Thread.Sleep(1000);
-            }
-
-            return (int)average.Average();
-
-        }
-
-        private int AveragePerformanceTask(PerformanceCounter performanceCounter)
-        {
-            Task<int> _task = new Task<int>(() =>
-            {
-                return AveragePerformance(performanceCounter);
-            });
-            _task.Start();
-
-            return _task.Result;
-        }
-
 
         private PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
         private PerformanceCounter ramCounter = new PerformanceCounter("Memory", "Available MBytes");
@@ -124,6 +71,7 @@ namespace surroa
         private void button1_Click(object sender, EventArgs e)
         {
 
+            PerformanceParameters performanceParameters = new PerformanceParameters();
 
             //CPU
 
@@ -131,7 +79,7 @@ namespace surroa
             Thread.Sleep(300);
             Task<int> cpu_task = new Task<int>(() =>
             {
-                return AveragePerformance(cpuCounter);
+                return performanceParameters.AveragePerformance(cpuCounter);
             });
             cpu_task.Start();
 
@@ -142,7 +90,7 @@ namespace surroa
             Thread.Sleep(300);
             Task<int> ram_task = new Task<int>(() =>
             {
-                return AveragePerformance(ramCounter);
+                return performanceParameters.AveragePerformance(ramCounter);
             });
             ram_task.Start();
 
@@ -153,14 +101,14 @@ namespace surroa
             Thread.Sleep(300);
             Task<int> diskRead_task = new Task<int>(() =>
             {
-                return AveragePerformance(diskReadsPerformanceCounter);
+                return performanceParameters.AveragePerformance(diskReadsPerformanceCounter);
                 
             });
             diskRead_task.Start();
 
             Task<int> diskWrite_task = new Task<int>(() =>
             {
-                return AveragePerformance(diskWritesPerformanceCounter);
+                return performanceParameters.AveragePerformance(diskWritesPerformanceCounter);
             });
             diskWrite_task.Start();
 
@@ -177,18 +125,18 @@ namespace surroa
 
             Task<int> netSent_task = new Task<int>(() =>
             {
-                return AveragePerformance(performanceCounterSent);
+                return performanceParameters.AveragePerformance(performanceCounterSent);
             });
             netSent_task.Start();
 
             Task<int> netReceive_task = new Task<int>(() =>
             {
-                return AveragePerformance(performanceCounterReceived);
+                return performanceParameters.AveragePerformance(performanceCounterReceived);
             });
             netReceive_task.Start();
 
 
-            PerformanceParameters performanceParameters = new PerformanceParameters();
+            
             //After threads finish
             performanceParameters.cpu_average = cpu_task.Result;
             performanceParameters.ram_average = ram_task.Result;
